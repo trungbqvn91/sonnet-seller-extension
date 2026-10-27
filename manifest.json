@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Seller Center Scraper",
+  "version": "0.3.1",
+  "description": "Run TikTok Shop Seller Center API backfills from an authenticated seller-vn.tiktok.com tab.",
+  "permissions": ["activeTab", "downloads", "scripting", "storage", "sidePanel", "alarms", "notifications"],
+  "host_permissions": [
+    "https://seller-vn.tiktok.com/*",
+    "https://*.tiktokcdn.com/*",
+    "http://127.0.0.1:8765/*",
+    "http://localhost:8765/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://seller-vn.tiktok.com/*"],
+      "js": ["core/config.js", "core/scraper-core.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Seller Scraper"
+  },
+  "options_ui": {
+    "page": "auto-hang-ngay.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "popup/popup.html"
+  }
+}

@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Thu thập dữ liệu Seller</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Thu thập dữ liệu Seller</h1>
+        <span id="status" class="status" data-state="Checking">Đang kiểm tra</span>
+      </header>
+
+      <section class="grid">
+        <label>
+          Từ ngày
+          <input id="startDate" type="date">
+        </label>
+        <label>
+          Đến ngày
+          <input id="endDate" type="date">
+        </label>
+      </section>
+
+      <section class="window-row" aria-label="Khoảng thời gian">
+        <button class="windowBtn" data-days="1">1 ngày</button>
+        <button class="windowBtn" data-days="3">3 ngày</button>
+        <button class="windowBtn" data-days="7">7 ngày</button>
+        <button class="windowBtn active" data-days="14">14 ngày</button>
+      </section>
+
+      <details class="help" open>
+        <summary>Hướng dẫn nhanh</summary>
+        <ul>
+          <li><b>Bước 1 – Chọn thời gian:</b> chọn ngày bắt đầu/kết thúc hoặc bấm nhanh 1, 3, 7, 14 ngày.</li>
+          <li><b>Bước 2 – Chọn nguồn:</b> chọn Cảm hứng, Bán chạy và các mục Video, LIVE, Thẻ sản phẩm, Nhà sáng tạo, Hàng mới.</li>
+          <li><b>Toàn thị trường:</b> dùng nút <b>Chạy toàn thị trường</b>.</li>
+          <li><b>Toàn bộ L1:</b> dùng nút <b>Quét toàn bộ L1</b>. Muốn toàn bộ L2 thị trường, dùng <b>Quét toàn bộ L2</b>.</li>
+          <li><b>Toàn bộ L2 của một L1:</b> trong Quét sâu, chỉ tích chọn L1 đó rồi chọn <b>Đào toàn bộ L2</b>; không cần tích từng L2.</li>
+          <li><b>Toàn bộ L3 của một L1:</b> chỉ tích chọn L1 đó rồi chọn <b>Đào toàn bộ L3</b>; tiện ích tự mở rộng toàn bộ nhánh.</li>
+          <li><b>L3 của một L2:</b> mở L1, tích chọn L2 cần lấy rồi chọn <b>Đào toàn bộ L3</b>.</li>
+          <li><b>Nhiều ngành khác nhau:</b> tích chọn nhiều L1/L2/L3 rồi chọn gộp như Seller hoặc tách từng ngành.</li>
+          <li><b>Hàng đợi hằng ngày:</b> chạy lần lượt các phạm vi đã chọn và tự xuất đủ dữ liệu sau mỗi phạm vi.</li>
+          <li><b>Dừng:</b> dừng mềm sau yêu cầu hiện tại; dữ liệu đã lấy vẫn có thể xuất. <b>Xuất tất cả</b> tải toàn bộ bảng kết quả.</li>
+        </ul>
+      </details>
+
+      <details class="workflow panel compact-panel" hidden>
+        <summary>Luồng lấy cây danh mục</summary>
+        <h2>Luồng lấy cây danh mục</h2>
+        <ol>
+          <li>Trên TikTok Shop, mở bộ lọc Hạng mục.</li>
+          <li>Chọn đúng một L1, rồi bấm <b>Quét L1 hiện tại</b>.</li>
+          <li>Bấm <b>Dùng cây vừa quét</b> để nạp L2 vừa đọc vào ô JSON cây ngành.</li>
+          <li>Muốn lấy L3: chọn đúng một L2, đặt <b>Cấp gốc = L2</b>, rồi bấm <b>Quét L2 hiện tại</b>.</li>
+          <li>Bấm lại <b>Dùng cây vừa quét</b>, sau đó <b>Lưu cây ngành</b>.</li>
+          <li>Khi cây đủ dữ liệu, dùng <b>Bắt đầu quét sâu</b> để quét theo L2 hoặc L3.</li>
+        </ol>
+      </details>
+
+      <section class="panel">
+        <h2>Chạy nhanh</h2>
+        <div class="actions">
+          <button id="runMarket">Chạy toàn thị trường</button>
+          <button id="runL1Scan">Quét toàn bộ L1</button>
+          <button id="runL2Scan">Quét toàn bộ L2</button>
+          <button id="stopJob" class="danger" disabled>Dừng</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Hàng đợi hằng ngày</h2>
+        <div class="checks">
+          <label><input id="queueIncludeMarket" type="checkbox" checked> Kèm toàn thị trường</label>
+          <label><input id="queueIncludeL1Scan" type="checkbox" checked> Kèm toàn bộ L1</label>
+        </div>
+        <details class="compact-panel filter-panel multi-picker" open>
+          <summary id="queueL1Summary">L1 trong hàng đợi: đang tải...</summary>
+          <div id="queueL1List" class="multi-picker-list"></div>
+        </details>
+        <p class="hint">Hàng đợi chạy từng phạm vi và xuất đủ dữ liệu xong mới chuyển sang phạm vi tiếp theo.</p>
+        <div class="actions">
+          <button id="queueDefaultL1" class="secondary">Chọn bộ mặc định</button>
+          <button id="runQueue">Chạy hàng đợi</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Nguồn dữ liệu</h2>
+        <div class="checks">
+          <label><input id="includeCamHung" type="checkbox" checked> Cảm hứng</label>
+          <label><input id="includeTopSelling" type="checkbox" checked> Bán chạy nhất</label>
+        </div>
+        <div class="tabs">
+          <label><input class="tab" value="video" type="checkbox" checked> Video</label>
+          <label><input class="tab" value="live" type="checkbox" checked> LIVE</label>
+          <label><input class="tab" value="prod_card" type="checkbox" checked> Thẻ sản phẩm</label>
+          <label><input class="tab" value="content" type="checkbox" checked> Nhà sáng tạo</label>
+          <label><input class="tab" value="new" type="checkbox" checked> Hàng mới</label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Tải video Cảm hứng</h2>
+        <details id="camHungL1Picker" class="compact-panel filter-panel multi-picker" open>
+          <summary id="camHungL1Summary">Phạm vi L1: đang tải...</summary>
+          <div id="camHungDownloadL1List" class="multi-picker-list"></div>
+        </details>
+        <label class="wide-label">
+          Kiểu đầu ra
+          <select id="camHungOutputMode">
+            <option value="video">Chỉ video</option>
+            <option value="transcript">Chỉ bản chép lời</option>
+            <option value="transcript_frames">Bản chép lời + khung hình mở đầu</option>
+          </select>
+        </label>
+        <details class="compact-panel filter-panel">
+          <summary>Bộ lọc</summary>
+          <section class="grid">
+            <label>
+              Điểm doanh thu ≥
+              <input id="camHungRevenueMin" type="number" min="0" step="0.0001" placeholder="Để trống = tất cả">
+            </label>
+            <label>
+              Điểm đơn hàng ≥
+              <input id="camHungOrdersMin" type="number" min="0" step="0.0001" placeholder="Để trống = tất cả">
+            </label>
+          </section>
+          <section class="grid">
+            <label>
+              Điểm lượt xem ≥
+              <input id="camHungViewsMin" type="number" min="0" step="0.0001" placeholder="Để trống = tất cả">
+            </label>
+            <label>
+              Đăng sau ngày
+              <input id="camHungPublishAfter" type="date">
+            </label>
+          </section>
+        </details>
+        <p class="hint">Không cần quét trước. Tải trực tiếp từ API Cảm hứng theo toàn thị trường hoặc một L1. Bản chép lời đi qua bộ nhớ tạm <code>Downloads/_temp_media</code>.</p>
+        <p id="helperStatus" class="hint">Bộ xử lý cục bộ: đang kiểm tra...</p>
+        <div class="actions">
+          <button id="downloadCamHungMedia">Tải video</button>
+        </div>
+      </section>
+
+      <details class="panel compact-panel" open>
+        <summary>Quét sâu đa ngành</summary>
+        <h2>Quét sâu đa ngành</h2>
+        <p class="hint">Chỉ dùng dữ liệu Bán chạy. Có thể chọn nhiều nhánh như bộ lọc Seller; API lọc chính xác đến L3. Hàng đợi hằng ngày không bị thay đổi.</p>
+        <section class="grid">
+          <label>
+            Cấp và cách đào
+            <select id="deepScanMode">
+              <option value="combined">Gộp các ngành đã chọn như Seller</option>
+              <option value="selected">Tách từng ngành đã chọn</option>
+              <option value="l1">Đào theo từng L1</option>
+              <option value="l2">Đào toàn bộ L2</option>
+              <option value="l3">Đào toàn bộ L3</option>
+              <option value="all_levels">Toàn thị trường + L1 + L2 + L3</option>
+              <option value="market">Chỉ toàn thị trường</option>
+            </select>
+          </label>
+          <label>
+            Tìm ngành
+            <input id="deepCategorySearch" type="search" placeholder="Tên hoặc ID ngành">
+          </label>
+        </section>
+        <div class="category-cascade" aria-label="Chọn ngành để quét sâu">
+          <section class="category-column">
+            <h3>Cấp 1 (L1)</h3>
+            <div id="deepL1List" class="category-list"></div>
+          </section>
+          <section class="category-column">
+            <h3>Cấp 2 (L2)</h3>
+            <div id="deepL2List" class="category-list"></div>
+          </section>
+          <section class="category-column">
+            <h3>Cấp 3 (L3)</h3>
+            <div id="deepL3List" class="category-list"></div>
+          </section>
+        </div>
+        <div class="deep-selection-bar">
+          <strong id="deepSelectionSummary">Chưa chọn ngành</strong>
+          <button id="clearDeepSelection" type="button" class="secondary compact-button">Bỏ chọn tất cả</button>
+        </div>
+        <div id="deepSelectedChips" class="selected-chips"></div>
+        <p id="deepScanEstimate" class="hint">Đang tính phạm vi...</p>
+        <div class="actions">
+          <button id="runMultiDeepScan">Bắt đầu quét sâu</button>
+        </div>
+      </details>
+
+      <details class="panel compact-panel" hidden>
+        <summary>Quét sâu cũ</summary>
+        <h2>Quét sâu cũ</h2>
+        <p id="deepScanAdvice" class="hint">Quét sâu L2/L3: khuyên chỉ dùng dữ liệu Bán chạy.</p>
+        <p class="hint">Cây ngành L1, L2 và L3 đã được tích hợp sẵn.</p>
+        <section class="grid">
+          <label>
+            Cấp gốc
+            <select id="rootLevel">
+              <option value="l1">L1</option>
+              <option value="l2">L2</option>
+            </select>
+          </label>
+          <label>
+            Phạm vi đích
+            <select id="targetMode">
+              <option value="self">Chỉ ngành này</option>
+              <option value="direct_children">Các ngành con trực tiếp</option>
+              <option value="all_l2">Toàn bộ L2</option>
+              <option value="all_l3">Toàn bộ L3</option>
+            </select>
+          </label>
+        </section>
+        <label class="wide-label">
+          Ngành gốc
+          <select id="rootCategory"></select>
+        </label>
+        <div class="actions">
+          <button id="runDeepScan">Bắt đầu quét sâu</button>
+        </div>
+      </details>
+
+      <details class="panel compact-panel" hidden>
+        <summary>Cây ngành</summary>
+        <h2>Cây ngành</h2>
+        <p class="hint">Dán JSON dạng <code>{ "l2": [...], "l3": [...] }</code>. Mỗi L2 cần <code>id</code>, <code>name</code>, <code>l1_id</code>. Mỗi L3 cần thêm <code>l2_id</code>.</p>
+        <div class="actions">
+          <button id="scanCurrentL1" class="secondary">Quét L1 hiện tại</button>
+          <button id="scanCurrentL2" class="secondary">Quét L2 hiện tại</button>
+        </div>
+        <div class="actions">
+          <button id="scanAllL2" class="secondary">Quét toàn bộ L2 (thử nghiệm)</button>
+          <button id="exportL2Catalog" class="secondary" disabled>Xuất cây JSON</button>
+          <button id="useScannedL2" class="secondary" disabled>Dùng cây vừa quét</button>
+        </div>
+        <label class="wide-label">
+          JSON cây ngành
+          <textarea id="categoryTreeInput" rows="9" placeholder='{
+  "l2": [
+    { "id": "1001", "name": "Kem dưỡng", "l1_id": "601450" }
+  ],
+  "l3": [
+    { "id": "2001", "name": "Kem dưỡng ban đêm", "l1_id": "601450", "l2_id": "1001" }
+  ]
+}'></textarea>
+        </label>
+        <div class="actions">
+          <button id="saveCategoryTree" class="secondary">Lưu cây ngành</button>
+          <button id="clearCategoryTree" class="secondary">Xóa cây đã lưu</button>
+        </div>
+        <div id="treeSummary" class="tree-summary">Đang dùng cây ngành tích hợp sẵn.</div>
+      </details>
+
+      <section class="actions">
+        <button id="exportCamHung" disabled>Xuất Cảm hứng</button>
+        <button id="exportTopSelling" disabled>Xuất Bán chạy</button>
+        <button id="exportTopSellingVideo" disabled>Xuất chi tiết video</button>
+        <button id="exportAll" disabled>Xuất tất cả</button>
+      </section>
+
+      <pre id="log"></pre>
+    </main>
+    <script src="../core/config.js"></script>
+    <script src="../core/scraper-core.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

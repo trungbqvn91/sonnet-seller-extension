@@ -1,0 +1,5 @@
+﻿Ban 0.3.1 (27/10/2026) - cho file tai tay GIONG HET file cua he thong tu dong (extension hub):
+- video-snapshots: them 2 cot CUOI public_video_id, public_video_url (link xem lau dai https://www.tiktok.com/@/video/<id>).
+- Cam hung (camhung): cot public_video_url chuyen xuong CUOI, them public_video_id; tu dien tu top-selling neu khop ma noi bo (giong ban tu dong).
+- Ten file, cac cot khac: khong doi. Pipeline doc CSV theo ten cot nen khong bi anh huong.
+Cai: chrome://extensions > Xoa ban cu > Load unpacked thu muc extension_idvideo.

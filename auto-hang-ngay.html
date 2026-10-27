@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Seller Scraper — Tự chạy hằng ngày</title>
+<style>
+  body { font: 15px/1.5 system-ui, "Segoe UI", Arial, sans-serif; max-width: 640px; margin: 24px auto; padding: 0 16px; color: #1f2937; }
+  h1 { font-size: 20px; } label { display: block; margin: 12px 0 4px; font-weight: 600; }
+  input[type=time], select { padding: 6px 8px; font: inherit; } button { font: inherit; padding: 8px 14px; border: 0; border-radius: 8px; background: #2563eb; color: #fff; cursor: pointer; margin-right: 8px; }
+  button.x { background: #e5e7eb; color: #111827; } .card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; margin: 14px 0; }
+  .ok { color: #166534; } .er { color: #b91c1c; } .m { color: #6b7280; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>Tự chạy hằng ngày</h1>
+<p class="m">Mỗi ngày đến giờ đặt, tiện ích tự dùng tab Seller Center (đã đăng nhập) tải video + kê khai Cảm hứng của vài ngày gần nhất, như khi bấm "Tải video Cảm hứng". Video đã tải rồi sẽ tự bỏ qua. Cần đăng nhập lại hoặc CAPTCHA thì hiện <b>thông báo</b> và thử lại sau — tiện ích KHÔNG tự vượt xác minh. Chrome phải đang mở.</p>
+<div class="card">
+  <label><input type="checkbox" id="bat"> Bật tự chạy hằng ngày</label>
+  <label for="gio">Giờ chạy (giờ máy)</label><input type="time" id="gio" value="08:00">
+  <label for="soNgay">Lấy dữ liệu bao nhiêu ngày gần nhất</label>
+  <select id="soNgay"><option>1</option><option selected>2</option><option>3</option><option>5</option><option>7</option><option>14</option></select>
+  <label for="thuLai">Gặp CAPTCHA thì thử lại sau (phút)</label>
+  <select id="thuLai"><option>15</option><option selected>30</option><option>60</option><option>120</option></select>
+  <p><button id="luu">Lưu</button><button class="x" id="chayNgay">Chạy thử ngay</button> <span id="msg" class="m"></span></p>
+</div>
+<div class="card"><b>Trạng thái</b><div id="tt" class="m">…</div></div>
+<script src="auto-hang-ngay-ui.js"></script>
+</body>
+</html>
